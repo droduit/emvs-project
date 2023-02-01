@@ -1,0 +1,11 @@
+#window {
+  background: url("img/rgba/0/07.png") repeat;
+  filter: progid:DXImageTransform.Microsoft.Shadow(color='#aaaaaa', Direction=135, Strength=12);
+  zoom: 1;
+}
+#window .closeWindow {
+  background: url("img/rgba/255/07.png") repeat;
+}
+#window .closeWindow:hover {
+  background: black;
+}

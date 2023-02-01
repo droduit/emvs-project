@@ -1,0 +1,111 @@
+html body {
+  background-color: #000000;
+  color: #6e6e6e;
+  font-family: arial;
+  font-size: 10px;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  padding: 0;
+  width: 100%;
+}
+#header-bar {
+  background-color: #000000;
+  border-bottom: 1px solid #191919;
+  height: 53px;
+  line-height: 53px;
+  margin-bottom: 1px;
+  z-index: 100;
+}
+#header-bar a.site-loopback {
+  background-position: left top;
+  background-repeat: no-repeat;
+  display: block;
+  float: right;
+  margin-left: -10px;
+  margin-top: 1px;
+  text-indent: -9999px;
+}
+#header-bar .a3docean-preview-logo {
+  background-image: url("http://0.envato-static.com/images/common/preview-logos/3docean-purchasethis.png?1315975390");
+  height: 52px;
+  width: 270px;
+}
+#header-bar .aactiveden-preview-logo {
+  background-image: url("http://0.envato-static.com/images/common/preview-logos/activeden-purchasethis.png?1315975390");
+  height: 52px;
+  width: 270px;
+}
+#header-bar .athemeforest-preview-logo {
+  background-image: url("http://0.envato-static.com/images/common/preview-logos/themeforest-purchasethis.png?1315975390");
+  height: 52px;
+  width: 270px;
+}
+#header-bar .acodecanyon-preview-logo {
+  background-image: url("http://3.envato-static.com/images/common/preview-logos/codecanyon-purchasethis.png?1315975390");
+  height: 52px;
+  width: 270px;
+}
+#header-bar .atutsmarketplace-preview-logo {
+  background-image: url("http://3.envato-static.com/images/common/preview-logos/tutsmarketplace-purchasethis.png?1315975390");
+  height: 52px;
+  width: 270px;
+}
+#header-bar p.meta-data {
+  float: left;
+  margin: 0;
+  padding: 0;
+}
+#header-bar p.meta-data p {
+  display: inline;
+  margin: 0;
+}
+#header-bar p.meta-data a {
+  color: #6e6e6e;
+  text-decoration: none;
+}
+#header-bar p.meta-data a.purchase {
+  border-left: 1px solid #6e6e6e;
+  margin-left: 10px;
+  padding-left: 15px;
+}
+#header-bar p.meta-data a:hover,
+#header-bar p.meta-data a.activated {
+  color: #ffffff;
+}
+#header-bar span.preview {
+  background: url("http://0.envato-static.com/images/activeden/right-slide.png?1311218483")
+    no-repeat scroll 0 1px transparent;
+  color: #d2d1d0;
+  display: none;
+  font-family: "Helvetica Neue", Arial, sans-serif;
+  font-size: 13px;
+  letter-spacing: 1px;
+  margin-left: 10px;
+  padding-left: 20px;
+  text-decoration: none;
+}
+#header-bar div.close-header {
+  float: left;
+  height: 52px;
+  margin-left: 5px;
+  width: 40px;
+}
+#header-bar div.close-header a#close-button {
+  background-image: url("http://3.envato-static.com/images/common/icons-buttons/button.gif?1311218500");
+  background-repeat: no-repeat;
+  border: 1px solid #545454;
+  display: block;
+  height: 16px;
+  margin: 17px auto 0;
+  text-indent: -9999px;
+  width: 16px;
+}
+#header-bar div.close-header a#close-button:hover,
+#header-bar div.close-header a#close-button.activated {
+  background-position: 0 -16px;
+}
+#preview-frame {
+  background-color: #ffffff;
+  width: 100%;
+}
