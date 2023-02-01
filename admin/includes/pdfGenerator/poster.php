@@ -2,35 +2,35 @@
 global $bdd;
 
 if (!isset($_POST['step2'])) {
-// Sélection des projets qui correspondent au choix effectué
-$queryBase = "SELECT * FROM tbl_projects
+    // Sélection des projets qui correspondent au choix effectué
+    $queryBase = "SELECT * FROM tbl_projects
 LEFT JOIN tbl_projects_history ON FKNoProject=PKNoProject
 LEFT JOIN tbl_history_students ON FKNoHistory=PKNoProjectHistory
 LEFT JOIN tbl_students ON FKNoStudent=PKNoStudent
 LEFT JOIN tbl_professions ON PKNoProfession=tbl_students.FKNoProfession
 LEFT JOIN tbl_rooms ON PKNoRoom=tbl_projects_history.salle
-WHERE year=".$_POST['year']." AND archive IS NULL";
+WHERE year=" . $_POST['year'] . " AND archive IS NULL";
 
-$queryFini = $queryBase;
+    $queryFini = $queryBase;
 
-$where = "";
-if (is_numeric($_POST['periode'])) {
-	$where .= " AND FKNoPeriode=".$_POST['periode'];
-}
-if (is_numeric($_POST['profession'])) {
-	$where .= " AND tbl_projects_history.FKNoProfession=".$_POST['profession'];
-	
-	$get_professions = $bdd->query("SELECT * FROM tbl_professions WHERE PKNoProfession=".$_POST['profession']);
-	$profession = $get_professions->fetch();
-} else {
-	$profession['name_'.$_SESSION['language']]= i("Toutes professions");
-}
+    $where = "";
+    if (is_numeric($_POST['periode'])) {
+        $where .= " AND FKNoPeriode=" . $_POST['periode'];
+    }
+    if (is_numeric($_POST['profession'])) {
+        $where .= " AND tbl_projects_history.FKNoProfession=" . $_POST['profession'];
 
-$queryFini.= $where." ORDER BY tbl_students.FKNoProfession ASC, title_".$_SESSION['language'];
-$get_projects = $bdd->query($queryFini);
+        $get_professions = $bdd->query("SELECT * FROM tbl_professions WHERE PKNoProfession=" . $_POST['profession']);
+        $profession = $get_professions->fetch();
+    } else {
+        $profession['name_' . $_SESSION['language']] = i("Toutes professions");
+    }
+
+    $queryFini .= $where . " ORDER BY tbl_students.FKNoProfession ASC, title_" . $_SESSION['language'];
+    $get_projects = $bdd->query($queryFini);
 ?>
 
-<?php if ($_POST['generateur']=="tcpdf") {?>
+<?php if ($_POST['generateur'] == "tcpdf") { ?>
 <div class="loader" align="center"
     style="padding: 8px; background: rgba(255,255,255,0.87); border-radius: 8px; margin-bottom: 12px"><img
         src="img/ajax-loader.gif" /></div>
@@ -41,7 +41,7 @@ $get_projects = $bdd->query($queryFini);
         <tr>
             <td>
                 <select name="multiPages" id="multiPage0">
-                    <option value="0"><?= i("Générer un PDF par projet") ;?></option>
+                    <option value="0"><?= i("Générer un PDF par projet"); ?></option>
                     <option value="1" selected="selected">
                         <?= i("Générer un seul PDF et répartir les projets sur plusieurs pages"); ?></option>
                 </select>
@@ -62,20 +62,27 @@ $get_projects = $bdd->query($queryFini);
     <div style="clear:left"></div>
 </div>
 
-<div class="block large wrapperContent" <?php if ($_POST['generateur']=="tcpdf") {?>style="display:none" <?php } ?>>
+<div class="block large wrapperContent" <?php if ($_POST['generateur'] == "tcpdf") { ?>style="display:none" <?php } ?>>
     <div class="titlebar">
-        <h3><?= i("Projets")." (".$get_projects->rowCount().")"; ?></h3>
+        <h3><?= i("Projets") . " (" . $get_projects->rowCount() . ")"; ?></h3>
 
         <div style="position:absolute; right:5px; top: 0; padding: 12px 10px 0px">
             <span><?= $_POST['year']; ?></span>
-            <span><?= " - "; if ($_POST['periode']=="all") { echo i("Toutes périodes"); } else { echo i("Période")." ".$_POST['periode']; } ?></span>
-            <span><?= " - ".$profession["name_".$_SESSION['language']]; ?></span>
+            <span><?= " - ";
+                        if ($_POST['periode'] == "all") {
+                            echo i("Toutes périodes");
+                        } else {
+                            echo i("Période") . " " . $_POST['periode'];
+                        } ?></span>
+            <span><?= " - " . $profession["name_" . $_SESSION['language']]; ?></span>
         </div>
     </div>
     <div class="block_cont" style="padding: 0px 0px 5px">
 
 
-        <?php if ($get_projects->rowCount()<1) { echo '<br><br><div align="center">'.i("Aucun projet ne correspond à ces critères").'</div><br><br>';} else { ?>
+        <?php if ($get_projects->rowCount() < 1) {
+                echo '<br><br><div align="center">' . i("Aucun projet ne correspond à ces critères") . '</div><br><br>';
+            } else { ?>
 
         <form method="post" id="form_step2">
             <div class="table-wrap">
@@ -83,55 +90,69 @@ $get_projects = $bdd->query($queryFini);
                     <table class="projects" style="width:948px">
                         <tbody>
                             <?php
-			$where.=" AND year=".$_POST['year'];
-			
-			while ($proj = $get_projects->fetch()) {
-				$get_students = $bdd->query(
-				"SELECT name, firstname, salle FROM tbl_students
+                                    $where .= " AND year=" . $_POST['year'];
+
+                                    while ($proj = $get_projects->fetch()) {
+                                        $get_students = $bdd->query(
+                                            "SELECT name, firstname, salle FROM tbl_students
 				LEFT JOIN tbl_history_students ON FKNoStudent=PKNoStudent
 				LEFT JOIN tbl_projects_history ON PKNoProjectHistory=FKNoHistory
-				WHERE FKNoProject=".$proj['PKNoProject'].$where."
+				WHERE FKNoProject=" . $proj['PKNoProject'] . $where . "
 				GROUP BY name, firstname, salle
 				ORDER BY name, firstname"
-			);
+                                        );
 
-				$students = "";
-				while ($stu = $get_students->fetch()) {
-					$students.= trim($stu['firstname'])." ".trim($stu['name']).",";
-				}
-				$students=substr($students, 0,-1);
-				
-				// ----------------
-				
-				$get_teachers = $bdd->query(
-				"SELECT name, firstname FROM tbl_teachers
+                                        $students = "";
+                                        while ($stu = $get_students->fetch()) {
+                                            $students .= trim($stu['firstname']) . " " . trim($stu['name']) . ",";
+                                        }
+                                        $students = substr($students, 0, -1);
+
+                                        // ----------------
+
+                                        $get_teachers = $bdd->query(
+                                            "SELECT name, firstname FROM tbl_teachers
 				LEFT JOIN tbl_history_teachers ON FKNoTeacher=PKNoTeacher
 				LEFT JOIN tbl_projects_history ON PKNoProjectHistory=FKNoHistory
-				WHERE FKNoProject=".$proj['PKNoProject'].$where." GROUP BY FKNoTeacher ORDER BY name, firstname");
-				
-			
-				$teachers = "";
-				while ($teach = $get_teachers->fetch()) {
-					$teachers.= trim($teach['firstname'])." ".trim($teach['name']).",";
-				}
-				$teachers=substr($teachers, 0,-1);
-				
-				$get_professions = $bdd->query("SELECT * FROM tbl_professions");
-				
-				$colorProfession = array("#900", "#090", "#009");
-				
-				// Image de l'historique en cours
-				$get_img = $bdd->query("SELECT FKNoMediaImage FROM tbl_projects_history WHERE PKNoProjectHistory=".$proj['PKNoProjectHistory']." AND FKNoMediaImage IS NOT NULL");
-				if ($get_img->rowCount()<1) { $img=""; } else { $image = $get_img->fetch(); $img=getImg($image['FKNoMediaImage']); }
-				
-				$attrTitle="";
-				if ($img!="") { $attrTitle = "<div style='background:url(".$img.") no-repeat 50% 50%; width:160px; height:120px; background-size: cover'></div>"; }
-				
-				if (strlen(strip_tags($proj['desc_fr'] ?? "").strip_tags($proj['desc_de'] ?? ""))>1900) { $troplong=true; } else { $troplong=false; }
+				WHERE FKNoProject=" . $proj['PKNoProject'] . $where . " GROUP BY FKNoTeacher ORDER BY name, firstname"
+                                        );
 
-			?>
-                            <tr style="cursor: default;" class="selected <?php if ($troplong) { echo 'troplong'; } ?>"
-                                projectid="<?= $proj['PKNoProject']; ?>" profession="<?= $idProf;?>"
+
+                                        $teachers = "";
+                                        while ($teach = $get_teachers->fetch()) {
+                                            $teachers .= trim($teach['firstname']) . " " . trim($teach['name']) . ",";
+                                        }
+                                        $teachers = substr($teachers, 0, -1);
+
+                                        $get_professions = $bdd->query("SELECT * FROM tbl_professions");
+
+                                        $colorProfession = array("#900", "#090", "#009");
+
+                                        // Image de l'historique en cours
+                                        $get_img = $bdd->query("SELECT FKNoMediaImage FROM tbl_projects_history WHERE PKNoProjectHistory=" . $proj['PKNoProjectHistory'] . " AND FKNoMediaImage IS NOT NULL");
+                                        if ($get_img->rowCount() < 1) {
+                                            $img = "";
+                                        } else {
+                                            $image = $get_img->fetch();
+                                            $img = getImg($image['FKNoMediaImage']);
+                                        }
+
+                                        $attrTitle = "";
+                                        if ($img != "") {
+                                            $attrTitle = "<div style='background:url(" . $img . ") no-repeat 50% 50%; width:160px; height:120px; background-size: cover'></div>";
+                                        }
+
+                                        if (strlen(strip_tags($proj['desc_fr'] ?? "") . strip_tags($proj['desc_de'] ?? "")) > 1900) {
+                                            $troplong = true;
+                                        } else {
+                                            $troplong = false;
+                                        }
+
+                                    ?>
+                            <tr style="cursor: default;" class="selected <?php if ($troplong) {
+                                                                                            echo 'troplong';
+                                                                                        } ?>"
+                                projectid="<?= $proj['PKNoProject']; ?>" profession="<?= $idProf; ?>"
                                 title="<?= $attrTitle; ?>">
                                 <td width="10px" class="check">
                                     <input type="checkbox" checked="checked" class="checkedInp"
@@ -146,11 +167,12 @@ $get_projects = $bdd->query($queryFini);
 
                                 <td style="width:60px">
                                     <select name="prof[<?= $proj['PKNoProject']; ?>]">
-                                        <?php while ($profession = $get_professions->fetch()) {?>
-                                        <option style="color:<?= $colorProfession[$profession['PKNoProfession']-1]; ?>"
-                                            <?php if ($proj['FKNoProfession']==$profession['PKNoProfession']) {?>selected="selected"
+                                        <?php while ($profession = $get_professions->fetch()) { ?>
+                                        <option
+                                            style="color:<?= $colorProfession[$profession['PKNoProfession'] - 1]; ?>"
+                                            <?php if ($proj['FKNoProfession'] == $profession['PKNoProfession']) { ?>selected="selected"
                                             <?php } ?> value="<?= $profession['PKNoProfession']; ?>">
-                                            <?= $profession['name_'.$_SESSION['language']]; ?></option>
+                                            <?= $profession['name_' . $_SESSION['language']]; ?></option>
                                         <?php } ?>
                                     </select>
                                 </td>
@@ -185,15 +207,15 @@ $get_projects = $bdd->query($queryFini);
                                     <div style="height: 3px;">&nbsp;</div>
                                     <div class="actionbar" style="width:10px; margin:0">
                                         <a class="action edit" style="cursor:pointer"
-                                            edit="<?= $proj['PKNoProject']; ?>"><span><?= i("Editer");?></span></a>
+                                            edit="<?= $proj['PKNoProject']; ?>"><span><?= i("Editer"); ?></span></a>
                                     </div>
                                 </td>
 
                             </tr>
 
                             <?php
-			}
-			?>
+                                    }
+                                    ?>
                         </tbody>
                     </table>
                 </div>
@@ -205,7 +227,7 @@ $get_projects = $bdd->query($queryFini);
             <input type="hidden" name="step2" value="" />
             <input type="hidden" name="generateur" value="<?= $_POST['generateur']; ?>" />
 
-            <?php if ($_POST['generateur']=="tcpdf") {?>
+            <?php if ($_POST['generateur'] == "tcpdf") { ?>
             <input type="hidden" name="multiPages" id="multiPage1" value="1" />
             <input type="hidden" name="showQR" id="showQR1" value="1" />
             <?php } ?>
@@ -249,7 +271,7 @@ $(function() {
     $(".table-wrap").css("border", "none");
 
 
-    <?php if ($_POST['generateur']=="tcpdf") {?>
+    <?php if ($_POST['generateur'] == "tcpdf") { ?>
     $("#multiPage0,#showQR0").change(function() {
         if ($(this).attr("id") == "showQR0") {
             if ($(this).is(":checked") == true) {
@@ -261,7 +283,7 @@ $(function() {
             $("#multiPage1").val($(this).val());
         }
     });
-    <?php }?>
+    <?php } ?>
 
     $('tr[projectid]').click(function() {
 
@@ -277,7 +299,7 @@ $(function() {
         $(this).parent().trigger("click");
     });
 
-    <?php if ($_POST['generateur']=="tcpdf") {?>
+    <?php if ($_POST['generateur'] == "tcpdf") { ?>
     var nbAuto = 0;
     $('.action.edit').each(function() {
         elm = $(this);
@@ -397,45 +419,47 @@ table.projects tr.troplong {
 }
 </style>
 <?php } else {
-	
-	function addslashes_recursive( $input ){
-		if ( is_array( $input ) ){
-			return array_map( __FUNCTION__, $input );
-		} else {
-			return addslashes( $input );
-		}
-	}	
-	?>
+
+    function addslashes_recursive($input) {
+        if (is_array($input)) {
+            return array_map(__FUNCTION__, $input);
+        } else {
+            return addslashes($input);
+        }
+    }
+?>
 
 <div style="width:850px">
 
     <?php
-	// ce qu'on evoye a la page pour générer les PDF
-	if ($_POST['generateur']=='tcpdf') { 
-		$post_escape =addslashes_recursive($_POST);
-		$post = addslashes(str_replace(array("\n", "\r"), array('###n###', '###r###'), serialize($post_escape) ));
-	} else {
-		$post_escape =addslashes_recursive($_POST);
-		$post = addslashes(str_replace(array("\n", "\r"), array('###n###', '###r###'), serialize($post_escape) ));	
-	}
-	
-	?>
+        // ce qu'on evoye a la page pour générer les PDF
+        if ($_POST['generateur'] == 'tcpdf') {
+            $post_escape = addslashes_recursive($_POST);
+            $post = addslashes(str_replace(array("\n", "\r"), array('###n###', '###r###'), serialize($post_escape)));
+        } else {
+            $post_escape = addslashes_recursive($_POST);
+            $post = addslashes(str_replace(array("\n", "\r"), array('###n###', '###r###'), serialize($post_escape)));
+        }
+
+        ?>
 
 </div>
 
 <?php
-    
-	if (getFilesDir('../media/pdf/')!=false) {
-		foreach (getFilesDir('../media/pdf/') as $pdf) {
-			if (file_exists('../media/pdf/'.$pdf)) { unlink('../media/pdf/'.$pdf); }
-		}
-	}
-	?>
+
+    if (getFilesDir('../media/pdf/') != false) {
+        foreach (getFilesDir('../media/pdf/') as $pdf) {
+            if (file_exists('../media/pdf/' . $pdf)) {
+                unlink('../media/pdf/' . $pdf);
+            }
+        }
+    }
+    ?>
 
 
 <div id="window_progress">
     <div class="illustration">
-        <?= i("Génération des PDF")." (".'<span class="nbCurrentPDF"></span>'." ".i("sur")." ".'<span class="nbTotalPDF"></span>'.")"; ?>
+        <?= i("Génération des PDF") . " (" . '<span class="nbCurrentPDF"></span>' . " " . i("sur") . " " . '<span class="nbTotalPDF"></span>' . ")"; ?>
         <img src="includes/pdfGenerator/img/loader-arrows.gif"
             style="position: absolute; margin-left: 10px; margin-top: -2px" />
     </div>
@@ -471,7 +495,7 @@ $(function() {
                 width: (currentProgress + nbStep + 0.030097) + "%"
             }, 200);
             setTimeout(function() {
-                if ($('.nbCurrentPDF').html() << ? = count($_POST['title_fr']); ? > ) {
+                if ($('.nbCurrentPDF').html() < <?= count($_POST['title_fr']) ?>) {
                     $('.nbCurrentPDF').html(parseInt($('.nbCurrentPDF').html()) + 1);
                 }
             }, 160);
@@ -479,11 +503,11 @@ $(function() {
             clearInterval();
         }
 
-    }, <?php if ($_POST['generateur']=='tcpdf') {?>750<?php } else { ?>500<?php }?>);
+    }, <?php if ($_POST['generateur'] == 'tcpdf') { ?>750<?php } else { ?>500<?php } ?>);
 
 
-    $.post('includes/pdfGenerator/<?php if ($_POST['generateur']=="tcpdf") { ?>createPosterPDF_TCPDF.php<?php } else { ?>createPosterPDF_FPDF.php<?php } ?>', {
-            <?php if ($_POST['generateur']=='tcpdf') {?>
+    $.post('includes/pdfGenerator/<?php if ($_POST['generateur'] == "tcpdf") { ?>createPosterPDF_TCPDF.php<?php } else { ?>createPosterPDF_FPDF.php<?php } ?>', {
+            <?php if ($_POST['generateur'] == 'tcpdf') { ?>
             post: '<?= $post; ?>'
             <?php } else { ?>
             post: '<?= $post; ?>'
@@ -505,16 +529,6 @@ $(function() {
 
         });
     return false;
-    // */	
-
-    /*
-		$.post('includes/pdfGenerator/testAjax.php',
-		{
-			post : '<?= $post; ?>'
-		}, function(html) {
-			
-		});
-		 */
 });
 </script>
 
@@ -561,4 +575,4 @@ $(function() {
 }
 </style>
 <?php
-}?>
+} ?>

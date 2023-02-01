@@ -47,7 +47,7 @@
             $format =  QRspec::getFormatInfo($mask, $level);
 
             for($i=0; $i<8; $i++) {
-                if ($format & 1) {
+                if($format & 1) {
                     $blacks += 2;
                     $v = 0x85;
                 } else {
@@ -55,7 +55,7 @@
                 }
                 
                 $frame[8][$width - 1 - $i] = chr($v);
-                if ($i < 6) {
+                if($i < 6) {
                     $frame[$i][8] = chr($v);
                 } else {
                     $frame[$i + 1][8] = chr($v);
@@ -64,7 +64,7 @@
             }
             
             for($i=0; $i<7; $i++) {
-                if ($format & 1) {
+                if($format & 1) {
                     $blacks += 2;
                     $v = 0x85;
                 } else {
@@ -72,7 +72,7 @@
                 }
                 
                 $frame[$width - 7 + $i][8] = chr($v);
-                if ($i == 0) {
+                if($i == 0) {
                     $frame[8][7] = chr($v);
                 } else {
                     $frame[8][6 - $i] = chr($v);
@@ -101,7 +101,7 @@
             
             for($y=0; $y<$width; $y++) {
                 for($x=0; $x<$width; $x++) {
-                    if (ord($frame[$y][$x]) & 0x80) {
+                    if(ord($frame[$y][$x]) & 0x80) {
                         $bitMask[$y][$x] = 0;
                     } else {
                         $maskFunc = call_user_func(array($this, 'mask'.$maskNo), $x, $y);
@@ -165,7 +165,7 @@
 
             for($y=0; $y<$width; $y++) {
                 for($x=0; $x<$width; $x++) {
-                    if ($bitMask[$y][$x] == 1) {
+                    if($bitMask[$y][$x] == 1) {
                         $d[$y][$x] = chr(ord($s[$y][$x]) ^ (int)$bitMask[$y][$x]);
                     }
                     $b += (int)(ord($d[$y][$x]) & 1);
@@ -192,19 +192,19 @@
 
             for($i=0; $i<$length; $i++) {
                 
-                if ($this->runLength[$i] >= 5) {
+                if($this->runLength[$i] >= 5) {
                     $demerit += (N1 + ($this->runLength[$i] - 5));
                 }
-                if ($i & 1) {
-                    if (($i >= 3) && ($i < ($length-2)) && ($this->runLength[$i] % 3 == 0)) {
+                if($i & 1) {
+                    if(($i >= 3) && ($i < ($length-2)) && ($this->runLength[$i] % 3 == 0)) {
                         $fact = (int)($this->runLength[$i] / 3);
-                        if (($this->runLength[$i-2] == $fact) &&
+                        if(($this->runLength[$i-2] == $fact) &&
                            ($this->runLength[$i-1] == $fact) &&
                            ($this->runLength[$i+1] == $fact) &&
                            ($this->runLength[$i+2] == $fact)) {
-                            if (($this->runLength[$i-3] < 0) || ($this->runLength[$i-3] >= (4 * $fact))) {
+                            if(($this->runLength[$i-3] < 0) || ($this->runLength[$i-3] >= (4 * $fact))) {
                                 $demerit += N3;
-                            } else if ((($i+3) >= $length) || ($this->runLength[$i+3] >= (4 * $fact))) {
+                            } else if((($i+3) >= $length) || ($this->runLength[$i+3] >= (4 * $fact))) {
                                 $demerit += N3;
                             }
                         }
@@ -230,20 +230,20 @@
                     $frameYM = $frame[$y-1];
                 
                 for($x=0; $x<$width; $x++) {
-                    if (($x > 0) && ($y > 0)) {
+                    if(($x > 0) && ($y > 0)) {
                         $b22 = ord($frameY[$x]) & ord($frameY[$x-1]) & ord($frameYM[$x]) & ord($frameYM[$x-1]);
                         $w22 = ord($frameY[$x]) | ord($frameY[$x-1]) | ord($frameYM[$x]) | ord($frameYM[$x-1]);
                         
-                        if (($b22 | ($w22 ^ 1))&1) {                                                                     
+                        if(($b22 | ($w22 ^ 1))&1) {                                                                     
                             $demerit += N2;
                         }
                     }
-                    if (($x == 0) && (ord($frameY[$x]) & 1)) {
+                    if(($x == 0) && (ord($frameY[$x]) & 1)) {
                         $this->runLength[0] = -1;
                         $head = 1;
                         $this->runLength[$head] = 1;
-                    } else if ($x > 0) {
-                        if ((ord($frameY[$x]) ^ ord($frameY[$x-1])) & 1) {
+                    } else if($x > 0) {
+                        if((ord($frameY[$x]) ^ ord($frameY[$x-1])) & 1) {
                             $head++;
                             $this->runLength[$head] = 1;
                         } else {
@@ -260,12 +260,12 @@
                 $this->runLength[0] = 1;
                 
                 for($y=0; $y<$width; $y++) {
-                    if ($y == 0 && (ord($frame[$y][$x]) & 1)) {
+                    if($y == 0 && (ord($frame[$y][$x]) & 1)) {
                         $this->runLength[0] = -1;
                         $head = 1;
                         $this->runLength[$head] = 1;
-                    } else if ($y > 0) {
-                        if ((ord($frame[$y][$x]) ^ ord($frame[$y-1][$x])) & 1) {
+                    } else if($y > 0) {
+                        if((ord($frame[$y][$x]) ^ ord($frame[$y-1][$x])) & 1) {
                             $head++;
                             $this->runLength[$head] = 1;
                         } else {
@@ -303,7 +303,7 @@
             
             $bestMask = $frame;
              
-            foreach ($checked_masks as $i) {
+            foreach($checked_masks as $i) {
                 $mask = array_fill(0, $width, str_repeat("\0", $width));
 
                 $demerit = 0;
@@ -314,7 +314,7 @@
                 $demerit = (int)((int)(abs($blacks - 50) / 5) * N4);
                 $demerit += $this->evaluateSymbol($width, $mask);
                 
-                if ($demerit < $minDemerit) {
+                if($demerit < $minDemerit) {
                     $minDemerit = $demerit;
                     $bestMask = $mask;
                     $bestMaskNum = $i;

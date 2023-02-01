@@ -33,7 +33,7 @@ class thumbnail
 	function thumbnail($imgfile) {
 		// Récupération du répertoire du fichier source
 		$this->img["directory_src"] = str_replace(strrchr($imgfile, "/"),'',$imgfile);
-		if (substr($this->img["directory_src"], -1)!="/") $this->img["directory_src"].="/";
+		if(substr($this->img["directory_src"], -1)!="/") $this->img["directory_src"].="/";
 		
 		// Récupération du nom du fichier source
 		$this->img["name_src"]=$imgfile;
@@ -63,7 +63,7 @@ class thumbnail
 		@$this->img["height_src"] = imagesy($this->img["src"]);
 		
 		// On définit si l'image est au format paysage ou portrait
-		if ($this->img["width_src"]<=$this->img["height_src"]) {
+		if($this->img["width_src"]<=$this->img["height_src"]) {
 			$this->img['orientation'] = 1; // Portrait
 		} else {
 			$this->img['orientation']  = 2; // Paysage
@@ -92,7 +92,7 @@ class thumbnail
     		@$this->img["height_dest"] = ($this->img["width_dest"]/$this->img["width_src"])*$this->img["height_src"];
 			
 			// Si l'image source est plus petite que la grandeur de minitaure spécifiée, on garde la taille source
-			if ($this->img["width_src"]<$size) {
+			if($this->img["width_src"]<$size) {
 				$this->img["width_dest"] = $this->img["width_src"];
 				$this->img["height_dest"] = $this->img["height_src"];
 			}
@@ -101,7 +101,7 @@ class thumbnail
     		@$this->img["width_dest"] = ($this->img["height_dest"]/$this->img["height_src"])*$this->img["width_src"];
 			
 			// Si l'image source est plus petite que la grandeur de minitaure spécifiée, on garde la taille source
-			if ($this->img["height_src"]<$size) {
+			if($this->img["height_src"]<$size) {
 				$this->img["width_dest"] = $this->img["width_src"];
 				$this->img["height_dest"] = $this->img["height_src"];
 			}
@@ -132,11 +132,11 @@ class thumbnail
 	*/
 	function save($directory="", $name_dest="") {
 		
-		if (substr($directory, -1)!="/") $directory.="/"; // Si le dernier caractère du répertoire renseigné n'est pas le / on l'ajoute
+		if(substr($directory, -1)!="/") $directory.="/"; // Si le dernier caractère du répertoire renseigné n'est pas le / on l'ajoute
 		$this->img["directory_dest"] = $directory; // On stoque le répertoire de destination
 		
 		// Si le parametre $name_dest est renseigné
-		if (empty($name_dest)) { // Si on ne passe pas le nom en paramètre -> On génère un nom
+		if(empty($name_dest)) { // Si on ne passe pas le nom en paramètre -> On génère un nom
 			$name_dest=$this->getDirectorySrc().$this->img["directory_dest"].$this->img["name_src"];
 		} else {
 			$name_dest=$this->getDirectorySrc().$this->img["directory_dest"].$name_dest;
@@ -146,7 +146,7 @@ class thumbnail
 		$this->img["dest"] = ImageCreateTrueColor($this->img["width_dest"],$this->img["height_dest"]);
 
 		// Si c'est une PNG, on garde la transparence
-		if ($this->img["format"]=="PNG") {
+		if($this->img["format"]=="PNG") {
 			imagealphablending($this->img["dest"],false);
 			imagesavealpha($this->img["dest"],true);	
 		}
@@ -154,7 +154,7 @@ class thumbnail
     	@imagecopyresampled ($this->img["dest"], $this->img["src"], 0, 0, 0, 0, $this->img["width_dest"], $this->img["height_dest"], $this->img["width_src"], $this->img["height_src"]);
 		
 		// Enregistrement des images selon leur format
-		if ($this->img["format"]=="JPG" || $this->img["format"]=="JPEG") {	//--- JPEG
+		if($this->img["format"]=="JPG" || $this->img["format"]=="JPEG") {	//--- JPEG
 			imagejpeg($this->img["dest"],$name_dest,$this->img["quality"]);
 		} elseif ($this->img["format"]=="PNG") {	//--- PNG
 			imagepng($this->img["dest"],$name_dest,$this->img["quality"]);
@@ -174,7 +174,7 @@ class thumbnail
 	function generateFilename() {
 		$extension = $this->getFormat();
 		
-		if (empty($name)) {
+		if(empty($name)) {
 			$name = $name."_".date('YmdHis');
 		} else {
 			$name = date('YmdHis');	
@@ -195,7 +195,7 @@ class thumbnail
 	* @return Extension du fichier
 	*/
 	function getFormat($file="") {
-		if (empty($file)) {
+		if(empty($file)) {
 			$file = $this->img["name_src"];
 		}
 		return ereg_replace(".*\.(.*)$","\\1",$file);

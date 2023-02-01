@@ -708,7 +708,7 @@ class QRcode {
 		}
 		$ret = $this->splitString();
 		if ($ret < 0) {
-			return null;
+			return NULL;
 		}
 		$this->encodeMask(-1);
 	}
@@ -721,7 +721,7 @@ class QRcode {
 		$spec = array(0, 0, 0, 0, 0);
 		$this->datacode = $this->getByteStream($this->items);
 		if (is_null($this->datacode)) {
-			return null;
+			return NULL;
 		}
 		$spec = $this->getEccSpec($this->version, $this->level, $spec);
 		$this->b1 = $this->rsBlockNum1($spec);
@@ -731,7 +731,7 @@ class QRcode {
 		$this->blocks = $this->rsBlockNum($spec);
 		$ret = $this->init($spec);
 		if ($ret < 0) {
-			return null;
+			return NULL;
 		}
 		$this->count = 0;
 		$this->width = $this->getWidth($this->version);
@@ -767,8 +767,8 @@ class QRcode {
 		} else {
 			$masked = $this->makeMask($this->width, $this->frame, $mask, $this->level);
 		}
-		if ($masked == null) {
-			return null;
+		if ($masked == NULL) {
+			return NULL;
 		}
 		$this->data = $masked;
 	}
@@ -838,11 +838,11 @@ class QRcode {
 				}
 			}
 			if (($x < 0) OR ($y < 0)) {
-				return null;
+				return NULL;
 			}
 			$this->x = $x;
 			$this->y = $y;
-		} while (ord($this->frame[$y][$x]) & 0x80);
+		} while(ord($this->frame[$y][$x]) & 0x80);
 		return array('x'=>$x, 'y'=>$y);
 	}
 
@@ -882,7 +882,7 @@ class QRcode {
 		$dl = $this->rsDataCodes2($spec);
 		$el = $this->rsEccCodes2($spec);
 		$rs = $this->init_rs(8, 0x11d, 0, 1, $el, 255 - $dl - $el);
-		if ($rs == null) {
+		if ($rs == NULL) {
 			return -1;
 		}
 		$endfor = $this->rsBlockNum2($spec);
@@ -1311,7 +1311,7 @@ class QRcode {
 	 protected function eatNum() {
 		$ln = $this->lengthIndicator(QR_MODE_NM, $this->version);
 		$p = 0;
-		while ($this->isdigitat($this->dataStr, $p)) {
+		while($this->isdigitat($this->dataStr, $p)) {
 			$p++;
 		}
 		$run = $p;
@@ -1344,10 +1344,10 @@ class QRcode {
 		$la = $this->lengthIndicator(QR_MODE_AN,  $this->version);
 		$ln = $this->lengthIndicator(QR_MODE_NM, $this->version);
 		$p =1 ;
-		while ($this->isalnumat($this->dataStr, $p)) {
+		while($this->isalnumat($this->dataStr, $p)) {
 			if ($this->isdigitat($this->dataStr, $p)) {
 				$q = $p;
-				while ($this->isdigitat($this->dataStr, $q)) {
+				while($this->isdigitat($this->dataStr, $q)) {
 					$q++;
 				}
 				$dif = $this->estimateBitsModeAn($p) // + 4 + la
@@ -1381,7 +1381,7 @@ class QRcode {
 	 */
 	 protected function eatKanji() {
 		$p = 0;
-		while ($this->identifyMode($p) == QR_MODE_KJ) {
+		while($this->identifyMode($p) == QR_MODE_KJ) {
 			$p += 2;
 		}
 		$this->items = $this->appendNewInputItem($this->items, QR_MODE_KJ, $p, str_split($this->dataStr));
@@ -1397,14 +1397,14 @@ class QRcode {
 		$ln = $this->lengthIndicator(QR_MODE_NM, $this->version);
 		$p = 1;
 		$dataStrLen = strlen($this->dataStr);
-		while ($p < $dataStrLen) {
+		while($p < $dataStrLen) {
 			$mode = $this->identifyMode($p);
 			if ($mode == QR_MODE_KJ) {
 				break;
 			}
 			if ($mode == QR_MODE_NM) {
 				$q = $p;
-				while ($this->isdigitat($this->dataStr, $q)) {
+				while($this->isdigitat($this->dataStr, $q)) {
 					$q++;
 				}
 				$dif = $this->estimateBitsMode8($p) // + 4 + l8
@@ -1417,7 +1417,7 @@ class QRcode {
 				}
 			} elseif ($mode == QR_MODE_AN) {
 				$q = $p;
-				while ($this->isalnumat($this->dataStr, $q)) {
+				while($this->isalnumat($this->dataStr, $q)) {
 					$q++;
 				}
 				$dif = $this->estimateBitsMode8($p)  // + 4 + l8
@@ -1516,7 +1516,7 @@ class QRcode {
 			$setData = array_merge($setData, array_fill(0, ($size - count($setData)), 0));
 		}
 		if (!$this->check($mode, $size, $setData)) {
-			return null;
+			return NULL;
 		}
 		$inputitem = array();
 		$inputitem['mode'] = $mode;
@@ -2593,13 +2593,13 @@ class QRcode {
 	 */
 	protected function newFrame($version) {
 		if (($version < 1) OR ($version > QRSPEC_VERSION_MAX)) {
-			return null;
+			return NULL;
 		}
 		if (!isset($this->frames[$version])) {
 			$this->frames[$version] = $this->createFrame($version);
 		}
 		if (is_null($this->frames[$version])) {
-			return null;
+			return NULL;
 		}
 		return $this->frames[$version];
 	}
@@ -2783,7 +2783,7 @@ class QRcode {
 		}
 		if ($sr != 1) {
 			// field generator polynomial is not primitive!
-			return null;
+			return NULL;
 		}
 		// Form RS code generator polynomial from its roots
 		$rs['genpoly'] = array_fill(0, ($nroots + 1), 0);

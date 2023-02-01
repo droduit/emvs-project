@@ -537,7 +537,7 @@ class PDF417 {
 		// get the input sequence array
 		$sequence = $this->getInputSequences($code);
 		$codewords = array(); // array of code-words
-		foreach ($sequence as $seq) {
+		foreach($sequence as $seq) {
 			$cw = $this->getCompaction($seq[0], $seq[1], true);
 			$codewords = array_merge($codewords, $cw);
 		}
@@ -787,7 +787,7 @@ class PDF417 {
 		// initialize array of error correction codewords
 		$ecw = array_fill(0, $eclsize, 0);
 		// for each data codeword
-		foreach ($cw as $k => $d) {
+		foreach($cw as $k => $d) {
 			$t1 = ($d + $ecw[$eclmaxid]) % 929;
 			for ($j = $eclmaxid; $j > 0; --$j) {
 				$t2 = ($t1 * $ecc[$j]) % 929;
@@ -798,7 +798,7 @@ class PDF417 {
 			$t3 = 929 - $t2;
 			$ecw[0] = $t3 % 929;
 		}
-		foreach ($ecw as $j => $e) {
+		foreach($ecw as $j => $e) {
 			if ($e != 0) {
 				$ecw[$j] = 929 - $e;
 			}
@@ -820,7 +820,7 @@ class PDF417 {
 		preg_match_all('/([0-9]{13,})/', $code, $numseq, PREG_OFFSET_CAPTURE);
 		$numseq[1][] = array('', strlen($code));
 		$offset = 0;
-		foreach ($numseq[1] as $seq) {
+		foreach($numseq[1] as $seq) {
 			$seqlen = strlen($seq[0]);
 			if ($seq[1] > 0) {
 				// extract text sequence before the number sequence
@@ -830,7 +830,7 @@ class PDF417 {
 				preg_match_all('/([\x09\x0a\x0d\x20-\x7e]{5,})/', $prevseq, $textseq, PREG_OFFSET_CAPTURE);
 				$textseq[1][] = array('', strlen($prevseq));
 				$txtoffset = 0;
-				foreach ($textseq[1] as $txtseq) {
+				foreach($textseq[1] as $txtseq) {
 					$txtseqlen = strlen($txtseq[0]);
 					if ($txtseq[1] > 0) {
 						// extract byte sequence before the text sequence

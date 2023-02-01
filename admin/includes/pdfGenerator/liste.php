@@ -2,39 +2,39 @@
 global $bdd;
 
 if (!isset($_POST['step2'])) {
-// Sélection des projets qui correspondent au choix effectué
-$queryBase = "SELECT * FROM tbl_projects
+    // Sélection des projets qui correspondent au choix effectué
+    $queryBase = "SELECT * FROM tbl_projects
 LEFT JOIN tbl_projects_history ON FKNoProject=PKNoProject
 LEFT JOIN tbl_history_students ON FKNoHistory=PKNoProjectHistory
 LEFT JOIN tbl_students ON FKNoStudent=PKNoStudent
 LEFT JOIN tbl_professions ON PKNoProfession=tbl_students.FKNoProfession
 LEFT JOIN tbl_rooms ON PKNoRoom=tbl_projects_history.salle
-WHERE year=".$_POST['year']." AND archive IS NULL";
+WHERE year=" . $_POST['year'] . " AND archive IS NULL";
 
 
-$queryFini = $queryBase;
+    $queryFini = $queryBase;
 
-$where = "";
-if (is_numeric($_POST['periode'])) {
-	$where .= " AND FKNoPeriode=".$_POST['periode'];
-}
-if (is_numeric($_POST['profession'])) {
-	$where .= " AND tbl_projects_history.FKNoProfession=".$_POST['profession'];
-	
-	$get_professions = $bdd->query("SELECT * FROM tbl_professions WHERE PKNoProfession=".$_POST['profession']);
-	$profession = $get_professions->fetch();
-} else {
-	$profession['name_'.$_SESSION['language']]= i("Toutes professions");
-}
+    $where = "";
+    if (is_numeric($_POST['periode'])) {
+        $where .= " AND FKNoPeriode=" . $_POST['periode'];
+    }
+    if (is_numeric($_POST['profession'])) {
+        $where .= " AND tbl_projects_history.FKNoProfession=" . $_POST['profession'];
 
-$queryFini.=$where." ORDER BY tbl_rooms.ordre ASC";
-$get_projects = $bdd->query($queryFini);
+        $get_professions = $bdd->query("SELECT * FROM tbl_professions WHERE PKNoProfession=" . $_POST['profession']);
+        $profession = $get_professions->fetch();
+    } else {
+        $profession['name_' . $_SESSION['language']] = i("Toutes professions");
+    }
+
+    $queryFini .= $where . " ORDER BY tbl_rooms.ordre ASC";
+    $get_projects = $bdd->query($queryFini);
 
 ?>
 
 <div class="block large wrapperContent">
     <div class="titlebar">
-        <h3><?= i("Projets")." (".$get_projects->rowCount().")"; ?></h3>
+        <h3><?= i("Projets") . " (" . $get_projects->rowCount() . ")"; ?></h3>
         <a style="cursor:pointer" class="toggle show tipsys addProject"
             title="<?= i("Ajouter des projets à la liste"); ?>">&nbsp;</a>
 
@@ -43,7 +43,9 @@ $get_projects = $bdd->query($queryFini);
     <div class="block_cont" style="padding: 0px 0px 5px">
 
 
-        <?php if ($get_projects->rowCount()<1) { echo '<br><br><div align="center">'.i("Aucun projet ne correspond à ces critères").'</div><br><br>';} else { ?>
+        <?php if ($get_projects->rowCount() < 1) {
+                echo '<br><br><div align="center">' . i("Aucun projet ne correspond à ces critères") . '</div><br><br>';
+            } else { ?>
 
         <form method="post" id="form_step2">
             <div class="table-wrap">
@@ -51,41 +53,48 @@ $get_projects = $bdd->query($queryFini);
                     <table class="projects">
                         <tbody>
                             <?php
-			$where.=" AND year=".$_POST['year'];
-			
-			while ($proj = $get_projects->fetch()) {
-				$get_students = $bdd->query(
-					"SELECT name, firstname, salle, PKNoStudent FROM tbl_students
+                                    $where .= " AND year=" . $_POST['year'];
+
+                                    while ($proj = $get_projects->fetch()) {
+                                        $get_students = $bdd->query(
+                                            "SELECT name, firstname, salle, PKNoStudent FROM tbl_students
 					LEFT JOIN tbl_history_students ON FKNoStudent=PKNoStudent
 					LEFT JOIN tbl_projects_history ON PKNoProjectHistory=FKNoHistory
-					WHERE FKNoProject=".$proj['PKNoProject'].$where."
+					WHERE FKNoProject=" . $proj['PKNoProject'] . $where . "
 					GROUP BY name, firstname, salle, PKNoStudent
 					ORDER BY name, firstname"
-				);
-				
-				$get_teachers = $bdd->query(
-					"SELECT name, firstname, PKNoTeacher FROM tbl_teachers
+                                        );
+
+                                        $get_teachers = $bdd->query(
+                                            "SELECT name, firstname, PKNoTeacher FROM tbl_teachers
 					LEFT JOIN tbl_history_teachers ON FKNoTeacher=PKNoTeacher
 					LEFT JOIN tbl_projects_history ON PKNoProjectHistory=FKNoHistory
-					WHERE FKNoProject=".$proj['PKNoProject'].$where.
-					" GROUP BY FKNoTeacher
+					WHERE FKNoProject=" . $proj['PKNoProject'] . $where .
+                                                " GROUP BY FKNoTeacher
 					ORDER BY name, firstname"
-				);
-				
-				$get_professions = $bdd->query("SELECT * FROM tbl_professions");
-				
-				$colorProfession = array("#900", "#090", "#009");
-				
-				// Image de l'historique en cours
-				$get_img = $bdd->query("SELECT FKNoMediaImage FROM tbl_projects_history WHERE PKNoProjectHistory=".$proj['PKNoProjectHistory']." AND FKNoMediaImage IS NOT NULL");
-				if ($get_img->rowCount()<1) { $img=""; } else { $image = $get_img->fetch(); $img=getImg($image['FKNoMediaImage']); }
-				
-				$attrTitle="";
-				if ($img!="") { $attrTitle = "<div style='background:url(".$img.") no-repeat 50% 50%; width:160px; height:120px; background-size: cover'></div>"; }
+                                        );
 
-			?>
+                                        $get_professions = $bdd->query("SELECT * FROM tbl_professions");
+
+                                        $colorProfession = array("#900", "#090", "#009");
+
+                                        // Image de l'historique en cours
+                                        $get_img = $bdd->query("SELECT FKNoMediaImage FROM tbl_projects_history WHERE PKNoProjectHistory=" . $proj['PKNoProjectHistory'] . " AND FKNoMediaImage IS NOT NULL");
+                                        if ($get_img->rowCount() < 1) {
+                                            $img = "";
+                                        } else {
+                                            $image = $get_img->fetch();
+                                            $img = getImg($image['FKNoMediaImage']);
+                                        }
+
+                                        $attrTitle = "";
+                                        if ($img != "") {
+                                            $attrTitle = "<div style='background:url(" . $img . ") no-repeat 50% 50%; width:160px; height:120px; background-size: cover'></div>";
+                                        }
+
+                                    ?>
                             <tr style="cursor: move;" class="selected" projectid="<?= $proj['PKNoProject']; ?>"
-                                profession="<?= $idProf;?>" title="<?= $attrTitle; ?>">
+                                profession="<?= $idProf; ?>" title="<?= $attrTitle; ?>">
                                 <td width="10px" class="check">
                                     <input type="checkbox" checked="checked" class="checkedInp"
                                         id="check_<?= $proj['PKNoProject']; ?>" />
@@ -93,11 +102,12 @@ $get_projects = $bdd->query($queryFini);
 
                                 <td style="width:25px; padding:0">
                                     <select name="prof[<?= $proj['PKNoProject']; ?>]">
-                                        <?php while ($profession = $get_professions->fetch()) {?>
-                                        <option style="color:<?= $colorProfession[$profession['PKNoProfession']-1]; ?>"
-                                            <?php if ($proj['FKNoProfession']==$profession['PKNoProfession']) {?>selected="selected"
+                                        <?php while ($profession = $get_professions->fetch()) { ?>
+                                        <option
+                                            style="color:<?= $colorProfession[$profession['PKNoProfession'] - 1]; ?>"
+                                            <?php if ($proj['FKNoProfession'] == $profession['PKNoProfession']) { ?>selected="selected"
                                             <?php } ?> value="<?= $profession['PKNoProfession']; ?>">
-                                            <?= substr($profession['name_'.$_SESSION['language']],0,1); ?></option>
+                                            <?= substr($profession['name_' . $_SESSION['language']], 0, 1); ?></option>
                                         <?php } ?>
                                     </select>
                                 </td>
@@ -117,23 +127,23 @@ $get_projects = $bdd->query($queryFini);
                                 <td width="205px">
 
                                     <?php
-					while ($teach = $get_teachers->fetch()) {
-						$teacher= trim($teach['firstname'])." ".trim($teach['name']);
-						?>
+                                                while ($teach = $get_teachers->fetch()) {
+                                                    $teacher = trim($teach['firstname']) . " " . trim($teach['name']);
+                                                ?>
 
                                     <div style="margin:0; padding:0;" class="teacher"
-                                        idno="<?= $teach['PKNoTeacher'];?>" proj="<?= $proj['PKNoProject']; ?>">
+                                        idno="<?= $teach['PKNoTeacher']; ?>" proj="<?= $proj['PKNoProject']; ?>">
 
-                                        <div <?php if ($get_teachers->rowCount()>1) {?>class="delItemPeople"
+                                        <div <?php if ($get_teachers->rowCount() > 1) { ?>class="delItemPeople"
                                             title="<?= i("Supprimer"); ?>" <?php } else { ?>class="pseudoDelItem"
-                                            <?php } ?> type="t" idno="<?= $teach['PKNoTeacher'];?>"
+                                            <?php } ?> type="t" idno="<?= $teach['PKNoTeacher']; ?>"
                                             proj="<?= $proj['PKNoProject']; ?>">
-                                            <?php if ($get_teachers->rowCount()>1) {?>X<?php }?></div>
+                                            <?php if ($get_teachers->rowCount() > 1) { ?>X<?php } ?></div>
 
                                         <div style="display:inline">
                                             <input type="text" placeholder="<?= i("Enseignants"); ?>"
                                                 style="width: 170px" value="<?= $teacher; ?>"
-                                                name="teacher[<?= $proj['PKNoProject']; ?>][<?= $teach['PKNoTeacher'];?>]"
+                                                name="teacher[<?= $proj['PKNoProject']; ?>][<?= $teach['PKNoTeacher']; ?>]"
                                                 class="editing teacher" />
                                         </div>
 
@@ -142,8 +152,8 @@ $get_projects = $bdd->query($queryFini);
                                     </div>
 
                                     <?php
-					}
-					?>
+                                                }
+                                                ?>
 
                                 </td>
 
@@ -152,21 +162,21 @@ $get_projects = $bdd->query($queryFini);
                                 <td width="205px">
 
                                     <?php
-					while ($stu = $get_students->fetch()) {
-						$student = trim($stu['firstname'])." ".trim($stu['name']); ?>
-                                    <div style="margin:0; padding:0;" class="student" idno="<?= $stu['PKNoStudent'];?>"
+                                                while ($stu = $get_students->fetch()) {
+                                                    $student = trim($stu['firstname']) . " " . trim($stu['name']); ?>
+                                    <div style="margin:0; padding:0;" class="student" idno="<?= $stu['PKNoStudent']; ?>"
                                         proj="<?= $proj['PKNoProject']; ?>">
 
-                                        <div <?php if ($get_students->rowCount()>1) {?>class="delItemPeople"
+                                        <div <?php if ($get_students->rowCount() > 1) { ?>class="delItemPeople"
                                             title="<?= i("Supprimer"); ?>" <?php } else { ?>class="pseudoDelItem"
-                                            <?php } ?> type="s" idno="<?= $stu['PKNoStudent'];?>"
+                                            <?php } ?> type="s" idno="<?= $stu['PKNoStudent']; ?>"
                                             proj="<?= $proj['PKNoProject']; ?>">
-                                            <?php if ($get_students->rowCount()>1) {?>X<?php } ?></div>
+                                            <?php if ($get_students->rowCount() > 1) { ?>X<?php } ?></div>
 
                                         <div style="display:inline">
                                             <input type="text" placeholder="<?= i("Apprentis"); ?>"
                                                 value="<?= $student; ?>" style="width: 170px"
-                                                name="student[<?= $proj['PKNoProject']; ?>][<?= $stu['PKNoStudent'];?>]"
+                                                name="student[<?= $proj['PKNoProject']; ?>][<?= $stu['PKNoStudent']; ?>]"
                                                 class="editing student" />
                                         </div>
 
@@ -174,8 +184,8 @@ $get_projects = $bdd->query($queryFini);
 
                                     </div>
                                     <?php
-					}
-                    ?>
+                                                }
+                                                ?>
 
                                 </td>
 
@@ -185,8 +195,8 @@ $get_projects = $bdd->query($queryFini);
                             </tr>
 
                             <?php
-			}
-			?>
+                                    }
+                                    ?>
                         </tbody>
                     </table>
                 </div>
@@ -370,40 +380,42 @@ table.projects tr.troplong {
 }
 </style>
 <?php } else {
-	
-	function addslashes_recursive( $input ){
-		if ( is_array( $input ) ){
-			return array_map( __FUNCTION__, $input );
-		} else {
-			return addslashes( $input );
-		}
-	}
-	?>
+
+    function addslashes_recursive($input) {
+        if (is_array($input)) {
+            return array_map(__FUNCTION__, $input);
+        } else {
+            return addslashes($input);
+        }
+    }
+?>
 
 <div style="width:850px">
 
     <?php
-	
-	// ce qu'on evoye a la page pour générer les PDF
-	$post_escape =addslashes_recursive($_POST);
-	$post = addslashes(str_replace(array("\n", "\r"), array('###n###', '###r###'), serialize($post_escape) ));
 
-	?>
+        // ce qu'on evoye a la page pour générer les PDF
+        $post_escape = addslashes_recursive($_POST);
+        $post = addslashes(str_replace(array("\n", "\r"), array('###n###', '###r###'), serialize($post_escape)));
+
+        ?>
 
 </div>
 
 <?php
-	if (getFilesDir('../media/pdf/')) {
-		foreach (getFilesDir('../media/pdf/') as $pdf) {
-			if (file_exists('../media/pdf/'.$pdf)) { unlink('../media/pdf/'.$pdf); }
-		}
-	}
-	?>
+    if (getFilesDir('../media/pdf/')) {
+        foreach (getFilesDir('../media/pdf/') as $pdf) {
+            if (file_exists('../media/pdf/' . $pdf)) {
+                unlink('../media/pdf/' . $pdf);
+            }
+        }
+    }
+    ?>
 
 
 <div id="window_progress">
     <div class="illustration">
-        <?= i("Génération des PDF")." (".'<span class="nbCurrentPDF"></span>'." ".i("sur")." ".'<span class="nbTotalPDF"></span>'.")"; ?>
+        <?= i("Génération des PDF") . " (" . '<span class="nbCurrentPDF"></span>' . " " . i("sur") . " " . '<span class="nbTotalPDF"></span>' . ")"; ?>
         <img src="includes/pdfGenerator/img/loader-arrows.gif"
             style="position: absolute; margin-left: 10px; margin-top: -2px" />
     </div>
@@ -442,7 +454,7 @@ $(function() {
                 width: (currentProgress + nbStep + 0.030097) + "%"
             }, 50);
             setTimeout(function() {
-                if ($('.nbCurrentPDF').html() << ? = count($_POST['title_fr']); ? > ) {
+                if ($('.nbCurrentPDF').html() < <?= count($_POST['title_fr']) ?>) {
                     $('.nbCurrentPDF').html(parseInt($('.nbCurrentPDF').html()) + 1);
                 }
             }, 5);
@@ -519,4 +531,4 @@ $(function() {
 }
 </style>
 <?php
-}?>
+} ?>

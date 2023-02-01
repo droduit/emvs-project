@@ -50,7 +50,7 @@
             
             $mask = 1 << ($bits - 1);
             for($i=0; $i<$bits; $i++) {
-                if ($num & $mask) {
+                if($num & $mask) {
                     $bstream->data[$i] = 1;
                 } else {
                     $bstream->data[$i] = 0;
@@ -71,7 +71,7 @@
             for($i=0; $i<$size; $i++) {
                 $mask = 0x80;
                 for($j=0; $j<8; $j++) {
-                    if ($data[$i] & $mask) {
+                    if($data[$i] & $mask) {
                         $bstream->data[$p] = 1;
                     } else {
                         $bstream->data[$p] = 0;
@@ -91,11 +91,11 @@
                 return -1;
             }
             
-            if ($arg->size() == 0) {
+            if($arg->size() == 0) {
                 return 0;
             }
             
-            if ($this->size() == 0) {
+            if($this->size() == 0) {
                 $this->data = $arg->data;
                 return 0;
             }
@@ -113,7 +113,7 @@
 
             $b = QRbitstream::newFromNum($bits, $num);
             
-            if (is_null($b))
+            if(is_null($b))
                 return -1;
 
             $ret = $this->append($b);
@@ -130,7 +130,7 @@
 
             $b = QRbitstream::newFromBytes($size, $data);
             
-            if (is_null($b))
+            if(is_null($b))
                 return -1;
 
             $ret = $this->append($b);
@@ -145,7 +145,7 @@
         
             $size = $this->size();
 
-            if ($size == 0) {
+            if($size == 0) {
                 return array();
             }
             
@@ -164,7 +164,7 @@
                 $data[$i] = $v;
             }
             
-            if ($size & 7) {
+            if($size & 7) {
                 $v = 0;
                 for($j=0; $j<($size & 7); $j++) {
                     $v = $v << 1;

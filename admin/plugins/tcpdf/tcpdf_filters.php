@@ -374,7 +374,7 @@ class TCPDF_FILTERS {
 		// data length
 		$data_length = strlen($data);
 		$i = 0;
-		while ($i < $data_length) {
+		while($i < $data_length) {
 			// get current byte value
 			$byte = ord($data{$i});
 			if ($byte == 128) {

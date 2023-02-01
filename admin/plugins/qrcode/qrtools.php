@@ -61,7 +61,7 @@
                 
             foreach ($qrTab as $line) {
                 $arrAdd = array();
-                foreach (str_split($line) as $char)
+                foreach(str_split($line) as $char)
                     $arrAdd[] = ($char=='1')?1:0;
                 $barcode_array['bcode'][] = $arrAdd;
             }
@@ -147,7 +147,7 @@
                     <thead><tr style="border-bottom:1px solid silver"><td colspan="2" style="text-align:center">BENCHMARK</td></tr></thead>
                     <tbody>';
 
-            foreach ($GLOBALS['qr_time_bench'] as $markerId=>$thisTime) {
+            foreach($GLOBALS['qr_time_bench'] as $markerId=>$thisTime) {
                 if ($p > 0) {
                     echo '<tr><th style="text-align:right">till '.$markerId.': </th><td>'.number_format($thisTime-$lastTime, 6).'s</td></tr>';
                 } else {
